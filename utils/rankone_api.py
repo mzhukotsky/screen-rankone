@@ -15,3 +15,4 @@ def get_profile_events(username):
     except requests.exceptions.RequestException as e:
         print(f"Ошибка при выполнении запроса: {e}")
         return None
+    
