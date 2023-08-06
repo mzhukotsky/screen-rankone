@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QApplication
 from gui.main_window import MainWindow
+from gui.profile_window import ProfileWindow
 import sys
 
 # Executing GUI window with login
