@@ -33,7 +33,7 @@ class LoginDialog(QDialog):
 
         if success:
             self.accept()
-            self.open_profile_window(short_profile_name)  # Pass short_profile_name here
+            self.open_profile_window(short_profile_name)
         else:
             print("Login failed. Please try again")
 

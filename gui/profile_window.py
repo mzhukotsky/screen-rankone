@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QVBoxLayout, QDialog, QTableWidget, QTableWidgetItem
+from PyQt6.QtWidgets import QLabel, QVBoxLayout, QDialog
 from utils.rankone_api import get_profile_events
 
 class ProfileWindow(QDialog):
@@ -12,30 +12,28 @@ class ProfileWindow(QDialog):
         self.profile_name_label = QLabel(f"Profile Name: {profile_name}", self)
         layout.addWidget(self.profile_name_label)
 
-        self.events_label = QLabel("Profile Events:", self)
-        layout.addWidget(self.events_label)
-
-        # Create a QTableWidget to display events
-        self.events_table = QTableWidget(self)
-        layout.addWidget(self.events_table)
+        self.avatar_label = QLabel("", self)  # Создайте метку для аватара
+        layout.addWidget(self.avatar_label)
 
         self.setLayout(layout)
 
-        # Fetch and display the events
-        self.populate_events(profile_name)
+        # Fetch and display the profile information
+        self.populate_profile_info(profile_name)
 
-    def populate_events(self, profile_name):
-        events_data = get_profile_events(profile_name)
-        if events_data and isinstance(events_data, list):
-            if len(events_data) > 0:
-                self.events_table.setRowCount(len(events_data))
-                self.events_table.setColumnCount(len(events_data[0]))
+    def populate_profile_info(self, profile_name):
+        profile_name_key = profile_name.split('/')[-1]
+        profile_data_get = get_profile_events(profile_name)  # Получите данные о профиле
 
-                for row_idx, event in enumerate(events_data):
-                    for col_idx, (key, value) in enumerate(event.items()):
-                        item = QTableWidgetItem(str(value))
-                        self.events_table.setItem(row_idx, col_idx, item)
+        if profile_data_get:
+            profile_basics = profile_data_get.get("profileBasics", {})
+            if profile_name_key in profile_basics:
+                profile_info = profile_basics.get(profile_name_key, {})
+                profile_nickname = profile_info.get('name', 'N/A')
+                avatar_link = profile_info.get('avatar', 'N/A')
+
+                self.profile_name_label.setText(f"Profile Name: {profile_nickname}")
+                self.avatar_label.setText(f"Avatar: {avatar_link}")
             else:
-                self.events_label.setText("No events found.")
+                self.profile_name_label.setText("Profile info not found.")
         else:
-            self.events_label.setText("Failed to fetch profile events.")
+            self.profile_name_label.setText("Failed to fetch profile info.")
